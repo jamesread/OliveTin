@@ -96,6 +96,7 @@ type Config struct {
 	ExternalRestAddress             string
 	LogLevel                        string
 	LogDebugOptions                 LogDebugOptions
+	LogHistoryPageSize              int64
 	Actions                         []*Action             `mapstructure:"actions"`
 	Entities                        []*EntityFile         `mapstructure:"entities"`
 	Dashboards                      []*DashboardComponent `mapstructure:"dashboards"`
@@ -212,6 +213,7 @@ func DefaultConfigWithBasePort(basePort int) *Config {
 	config.EnableCustomJs = false
 	config.ExternalRestAddress = "."
 	config.LogLevel = "INFO"
+	config.LogHistoryPageSize = 10
 	config.CheckForUpdates = false
 	config.DefaultPermissions.Exec = true
 	config.DefaultPermissions.View = true

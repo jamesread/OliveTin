@@ -63,7 +63,7 @@
 						</button>
 					</label>
 				</div>
-				<table title = "Logs">
+				<table id = "logsTable" title = "Logs" hidden>
 					<thead>
 						<tr title = "untitled">
 							<th>Timestamp</th>
@@ -74,6 +74,10 @@
 					</thead>
 					<tbody id = "logTableBody" />
 				</table>
+
+				<p id = "logsTableEmpty">There are no logs to display. <a href = "/">Return to index</a></p>
+
+				<p><strong>Note:</strong> The server is configured to only send <strong id = "logs-server-page-size">?</strong> log entries at a time. The search box at the top of this page only searches this current page of logs.</p>
 			</section>
 
 			<section id = "contentDiagnostics" title = "Diagnostics" class = "box-shadow" hidden>

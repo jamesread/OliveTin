@@ -36,14 +36,6 @@ func Reload(cfg *Config) {
 		os.Exit(1)
 	}
 
-	if cfg.AuthRequireGuestsToLogin {
-		log.Infof("AuthRequireGuestsToLogin is enabled. All defaultPermissions will be set to false")
-
-		cfg.DefaultPermissions.View = false
-		cfg.DefaultPermissions.Exec = false
-		cfg.DefaultPermissions.Logs = false
-	}
-
 	metricConfigReloadedCount.Inc()
 	metricConfigActionCount.Set(float64(len(cfg.Actions)))
 

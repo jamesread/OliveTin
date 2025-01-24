@@ -14,7 +14,6 @@ import (
 
 	"errors"
 	"net"
-	"sort"
 
 	acl "github.com/OliveTin/OliveTin/internal/acl"
 	config "github.com/OliveTin/OliveTin/internal/config"
@@ -209,6 +208,7 @@ func internalLogEntryToPb(logEntry *executor.InternalLogEntry) *pb.LogEntry {
 		ActionId:            logEntry.ActionId,
 		DatetimeStarted:     logEntry.DatetimeStarted.Format("2006-01-02 15:04:05"),
 		DatetimeFinished:    logEntry.DatetimeFinished.Format("2006-01-02 15:04:05"),
+		DatetimeIndex:       logEntry.Index,
 		Output:              logEntry.Output,
 		TimedOut:            logEntry.TimedOut,
 		Blocked:             logEntry.Blocked,
@@ -335,24 +335,20 @@ func (api *oliveTinAPI) GetLogs(ctx ctx.Context, req *pb.GetLogsRequest) (*pb.Ge
 
 	ret := &pb.GetLogsResponse{}
 
-	// TODO Limit to 10 entries or something to prevent browser lag.
+	logEntries, countRemaining := api.executor.GetLogTrackingIds(req.StartOffset, cfg.LogHistoryPageSize)
 
-	for trackingId, logEntry := range api.executor.GetLogsCopy() {
+	for _, logEntry := range logEntries {
 		action := cfg.FindAction(logEntry.ActionTitle)
 
 		if action == nil || acl.IsAllowedLogs(cfg, user, action) {
 			pbLogEntry := internalLogEntryToPb(logEntry)
-			pbLogEntry.ExecutionTrackingId = trackingId
 
 			ret.Logs = append(ret.Logs, pbLogEntry)
 		}
 	}
 
-	sorter := func(i, j int) bool {
-		return ret.Logs[i].DatetimeStarted < ret.Logs[j].DatetimeStarted
-	}
-
-	sort.Slice(ret.Logs, sorter)
+	ret.CountRemaining = countRemaining
+	ret.PageSize = cfg.LogHistoryPageSize
 
 	return ret, nil
 }

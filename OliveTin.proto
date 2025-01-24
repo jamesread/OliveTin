@@ -102,7 +102,9 @@ message StartActionByGetAndWaitResponse {
 	LogEntry log_entry = 1;
 }
 
-message GetLogsRequest{};
+message GetLogsRequest{
+  int64 start_offset = 1;
+};
 
 message LogEntry {
 	string datetime_started = 1;
@@ -120,10 +122,13 @@ message LogEntry {
 	bool execution_started = 14;
 	bool execution_finished = 15;
 	bool blocked = 16;
+	int64 datetime_index = 17;
 }
 
 message GetLogsResponse {
 	repeated LogEntry logs = 1;
+	int64 count_remaining = 2;
+	int64 page_size = 3;
 }
 
 message ValidateArgumentTypeRequest {

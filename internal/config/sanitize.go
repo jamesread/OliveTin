@@ -41,6 +41,28 @@ func (action *Action) sanitize(cfg *Config) {
 	for idx := range action.Arguments {
 		action.Arguments[idx].sanitize()
 	}
+
+	sanitizeAuthRequireGuestsToLogin(cfg)
+	sanitizeLogHistoryPageSize(cfg)
+}
+
+func sanitizeAuthRequireGuestsToLogin(cfg *Config) {
+	if cfg.AuthRequireGuestsToLogin {
+		log.Infof("AuthRequireGuestsToLogin is enabled. All defaultPermissions will be set to false")
+
+		cfg.DefaultPermissions.View = false
+		cfg.DefaultPermissions.Exec = false
+		cfg.DefaultPermissions.Logs = false
+	}
+}
+
+func sanitizeLogHistoryPageSize(cfg *Config) {
+	if cfg.LogHistoryPageSize < 10 {
+		log.Warnf("LogsHistoryLimit is too low, setting it to 10")
+		cfg.LogHistoryPageSize = 10
+	} else if cfg.LogHistoryPageSize > 100 {
+		log.Warnf("LogsHistoryLimit is high, you can do this, but expect browser lag.")
+	}
 }
 
 func getActionID(action *Action) string {
